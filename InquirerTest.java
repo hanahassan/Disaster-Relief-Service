@@ -1,80 +1,69 @@
-/*
-Copyright Ann Barcomb and Khawla Shnaikat, 2024
-Licensed under GPL v3
-See LICENSE.txt for more information.
-*/
 package edu.ucalgary.oop;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
-
 public class InquirerTest {
     
-/* 
-Define the values which will be used for tests
-*/
-private String expectedFirstName = "Joseph";
-private String expectedLastName = "Bouillon";
-private String expectedPhoneNumber = "+1-123-456-7890";
-private String expectedMessage = "looking for my family members";
-private Inquirer inquirer = new Inquirer(expectedFirstName, expectedLastName, expectedPhoneNumber, expectedMessage);
+    // Define the values which will be used for tests
+    private String expectedFirstName = "John";
+    private String expectedLastName = "Doe";
+    private String expectedPhoneNumber = "+1-987-654-3210";
+    private String expectedMessage = "Looking for information";
 
-/*
-testObjectCreation -> means testing Inquirer constructor: 
-   - What we need: To verify that an "Inquirer" object is successfully created.
-   - Actual result: The name "Joseph Bouillon", the services phone number "+1-123-456-7890", and the provided info is "looking for my family members".
-   - Expected Result: The test checks that the Inquirer object is not null, confirming successful object creation.
-*/
+    // Initialize Inquirer object with predefined values for testing
+    private Inquirer inquirer = new Inquirer(expectedFirstName, expectedLastName, expectedPhoneNumber, expectedMessage);
+
+    // Test Object Creation
     @Test
     public void testObjectCreation() {
+        // Verify that an "Inquirer" object is successfully created
         assertNotNull(inquirer);
     }
 
-/*
-testGetFirstName**: 
-   - What we need: To ensure the "getFirstName()" method correctly returns the actual inquirer's first name.
-   - Actual result: "Joseph".
-   - Expected result: "inquirer.getFirstName()" should return "Joseph".
-   */
+    // Test for getFirstName() method
     @Test
     public void testGetFirstName() {
-        assertEquals("getFirstName() should return inquirer's first name", expectedFirstName, inquirer.getFirstName());
+        // Ensure getFirstName() method returns the correct first name
+        assertEquals("getFirstName() should return the inquirer's first name", expectedFirstName, inquirer.getFirstName());
     }
-	
-/*
-testGetLastName: 
-   - What we need: To confirm that the "getLastName()" method accurately returns inquirer's last name.
-   - Actual result:"Bouillon".
-   - Expected result: "inquirer.getLastName()" should return "Bouillon".
-*/
+
+    // Test for getLastName() method
     @Test
     public void testGetLastName() {
-        assertEquals("getLastName() should return inquirer's last name", expectedLastName, inquirer.getLastName());
+        // Ensure getLastName() method returns the correct last name
+        assertEquals("getLastName() should return the inquirer's last name", expectedLastName, inquirer.getLastName());
     }
-	
-/*
-testGetServicesPhoneNum**: 
-   - What we need: To confirm that "getServicesPhoneNum()" method correctly returns the services phone number.
-   - Actual result: "+1-123-456-7890".
-   - Expected result: "inquirer.getServicesPhoneNum()" should return "+1-123-456-7890".
-*/
+
+    // Test for setFirstName() method
+    @Test
+    public void testSetFirstName() {
+        // Set a new first name
+        inquirer.setFirstName("Jane");
+        // Verify that the first name has been updated
+        assertEquals("setFirstName() should update the inquirer's first name", "Jane", inquirer.getFirstName());
+    }
+
+    // Test for setLastName() method
+    @Test
+    public void testSetLastName() {
+        // Set a new last name
+        inquirer.setLastName("Smith");
+        // Verify that the last name has been updated
+        assertEquals("setLastName() should update the inquirer's last name", "Smith", inquirer.getLastName());
+    }
+
+    // Test for getServicesPhoneNum() method
     @Test
     public void testGetServicesPhoneNum() {
-
-        assertEquals("getServicesPhoneNum() should return the correct Services Number",expectedPhoneNumber, inquirer.getServicesPhoneNum());
+        // Ensure getServicesPhoneNum() method returns the correct services phone number
+        assertEquals("getServicesPhoneNum() should return the correct services phone number", expectedPhoneNumber, inquirer.getServicesPhoneNum());
     }
-	
-/*
-testGetInfo:
-   - What we need: To confirm that "getInfo()" method retrieves the correct information string. 
-   - Actual result: "looking for my family members".
-   - Expected result: "inquirer.getInfo()" should return the string "looking for my family members".
-*/
+
+    // Test for getInfo() method
     @Test
     public void testGetInfo() {
-        assertEquals("getInfo() should return the inquirer message", expectedMessage,inquirer.getInfo());
+        // Ensure getInfo() method returns the correct information message
+        assertEquals("getInfo() should return the inquirer's message", expectedMessage, inquirer.getInfo());
     }
-
 }
-
