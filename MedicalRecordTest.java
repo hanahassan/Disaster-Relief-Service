@@ -21,13 +21,13 @@ import static org.junit.Assert.*;
 public class MedicalRecordTest {
 
     // Define new expected values for testing
-    Location newExpectedLocation = new Location("HospitalX", "123 Main Street");
-    private String newExpectedTreatmentDetails = "Fractured leg treated";
-    private String newExpectedDateOfTreatment = "2024-02-20";
-    private String newValidDateOfTreatment = "2024-03-15";
-    private String newInvalidDateOfTreatment = "2024/03/15";
-    MedicalRecord medicalRecord = new MedicalRecord(newExpectedLocation, newExpectedTreatmentDetails,
-            newExpectedDateOfTreatment);
+    Location testExpectedLocation = new Location("HospitalX", "123 Main Street");
+    private String testExpectedTreatmentDetails = "Fractured leg treated";
+    private String testExpectedDateOfTreatment = "2024-02-20";
+    private String testValidDateOfTreatment = "2024-03-15";
+    private String testInvalidDateOfTreatment = "2024/03/15";
+    MedicalRecord medicalRecord = new MedicalRecord(testExpectedLocation, testExpectedTreatmentDetails,
+            testExpectedDateOfTreatment);
 
     // Test case to ensure that MedicalRecord object is successfully created
     @Test
@@ -38,54 +38,54 @@ public class MedicalRecordTest {
     // Test case to check the functionality of getLocation method
     @Test
     public void testGetLocation() {
-        assertEquals("getLocation should return the correct Location", newExpectedLocation, medicalRecord.getLocation());
+        assertEquals("getLocation should return the correct Location", testExpectedLocation, medicalRecord.getLocation());
     }
 
     // Test case to check the functionality of setLocation method
     @Test
     public void testSetLocation() {
-        Location newerExpectedLocation = new Location("HospitalY", "456 Oak Street");
-        medicalRecord.setLocation(newerExpectedLocation);
-        assertEquals("setLocation should update the Location", newerExpectedLocation.getName(),
+        Location newExpectedLocation = new Location("HospitalY", "456 Oak Street");
+        medicalRecord.setLocation(newExpectedLocation);
+        assertEquals("setLocation should update the Location", newExpectedLocation.getName(),
                 medicalRecord.getLocation().getName());
     }
 
     // Test case to check the functionality of getTreatmentDetails method
     @Test
     public void testGetTreatmentDetails() {
-        assertEquals("getTreatmentDetails should return the correct treatment details", newExpectedTreatmentDetails,
+        assertEquals("getTreatmentDetails should return the correct treatment details", testExpectedTreatmentDetails,
                 medicalRecord.getTreatmentDetails());
     }
 
     // Test case to check the functionality of setTreatmentDetails method
     @Test
     public void testSetTreatmentDetails() {
-        String newerExpectedTreatment = "No surgery required";
-        medicalRecord.setTreatmentDetails(newerExpectedTreatment);
-        assertEquals("setTreatmentDetails should update the treatment details", newerExpectedTreatment,
+        String newExpectedTreatment = "No surgery required";
+        medicalRecord.setTreatmentDetails(newExpectedTreatment);
+        assertEquals("setTreatmentDetails should update the treatment details", newExpectedTreatment,
                 medicalRecord.getTreatmentDetails());
     }
 
     // Test case to check the functionality of getDateOfTreatment method
     @Test
     public void testGetDateOfTreatment() {
-        assertEquals("getDateOfTreatment should return the correct date of treatment", newExpectedDateOfTreatment,
+        assertEquals("getDateOfTreatment should return the correct date of treatment", testExpectedDateOfTreatment,
                 medicalRecord.getDateOfTreatment());
     }
 
     // Test case to check the functionality of setDateOfTreatment method
     @Test
     public void testSetDateOfTreatment() {
-        String newerExpectedDateOfTreatment = "2024-02-21";
-        medicalRecord.setDateOfTreatment(newerExpectedDateOfTreatment);
-        assertEquals("setDateOfTreatment should update date of treatment", newerExpectedDateOfTreatment,
+        String newExpectedDateOfTreatment = "2024-02-21";
+        medicalRecord.setDateOfTreatment(newExpectedDateOfTreatment);
+        assertEquals("setDateOfTreatment should update date of treatment", newExpectedDateOfTreatment,
                 medicalRecord.getDateOfTreatment());
     }
 
     // Test case to check if setDateOfTreatment method accepts a valid date format
     @Test
     public void testSetDateOfTreatmentWithValidFormat() {
-        medicalRecord.setDateOfTreatment(newValidDateOfTreatment); // Should not throw an exception
+        medicalRecord.setDateOfTreatment(testValidDateOfTreatment); // Should not throw an exception
     }
 
     // Test case to check if setDateOfTreatment method throws an exception with an invalid date format
@@ -95,7 +95,7 @@ public class MedicalRecordTest {
         String failureReason = "no exception was thrown";
 
         try {
-            medicalRecord.setDateOfTreatment(newInvalidDateOfTreatment); // Should throw IllegalArgumentException
+            medicalRecord.setDateOfTreatment(testInvalidDateOfTreatment); // Should throw IllegalArgumentException
         } catch (IllegalArgumentException e) {
             correctValue = true;
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class MedicalRecordTest {
         }
 
         String message = "setDateOfTreatment() should throw an IllegalArgumentException with invalid date format '"
-                + newInvalidDateOfTreatment + "' but " + failureReason + ".";
+                + testInvalidDateOfTreatment + "' but " + failureReason + ".";
         assertTrue(message, correctValue);
     }
 
@@ -114,7 +114,7 @@ public class MedicalRecordTest {
         String failureReason = "no exception was thrown";
 
         try {
-            medicalRecord.setDateOfTreatment(newExpectedTreatmentDetails); // Should throw IllegalArgumentException
+            medicalRecord.setDateOfTreatment(testExpectedTreatmentDetails); // Should throw IllegalArgumentException
         } catch (IllegalArgumentException e) {
             correctValue = true;
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class MedicalRecordTest {
         }
 
         String message = "setDateOfTreatment() should throw an IllegalArgumentException with invalid non-date input '"
-                + newInvalidDateOfTreatment + "' but " + failureReason + ".";
+                + testInvalidDateOfTreatment + "' but " + failureReason + ".";
         assertTrue(message, correctValue);
     }
 }
