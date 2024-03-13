@@ -1,7 +1,13 @@
-/*
-Copyright Ann Barcomb and Khawla Shnaikat, 2024
-Licensed under GPL v3
-See LICENSE.txt for more information.
+/** 
+@author: Hana Hassan
+@ucid: 30172447
+@version: 1.3
+@since: 1.0
+
+The SupplyTest class contains unit tests for the Supply class, which represents supplies for disaster relief efforts. 
+It verifies the functionality of various methods in the Supply class.
+The Supply class encapsulates information about the type and quantity of supplies available for distribution.
+Unit tests in this class cover object creation, getter and setter methods for supply type and quantity, as well as the decreaseQuantity method.
 */
 package edu.ucalgary.oop;
 
@@ -89,7 +95,8 @@ public class SupplyTest {
     @Test
     public void testDecreaseQuantity() {
         supply.decreaseQuantity(5);
-        assertEquals("decreaseQuantity should reduce the quantity by 5", testExpectedQuantity - 5, supply.getQuantity());
+        assertEquals("decreaseQuantity should reduce the quantity by 5", testExpectedQuantity - 5,
+                supply.getQuantity());
     }
 
 }

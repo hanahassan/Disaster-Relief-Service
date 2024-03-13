@@ -43,20 +43,25 @@ public class MedicalRecordTest {
 
     /*
      * testGetLocation:
-     * - Objective: To ensure the "getLocation()" method correctly returns the actual Location.
+     * - Objective: To ensure the "getLocation()" method correctly returns the
+     * actual Location.
      * - Actual result: getLocation should return the correct Location.
-     * - Expected result: The returned Location should match the one set during setup.
+     * - Expected result: The returned Location should match the one set during
+     * setup.
      */
     @Test
     public void testGetLocation() {
-        assertEquals("getLocation should return the correct Location", testExpectedLocation, medicalRecord.getLocation());
+        assertEquals("getLocation should return the correct Location", testExpectedLocation,
+                medicalRecord.getLocation());
     }
 
     /*
      * testSetLocation:
-     * - Objective: To ensure the "setLocation()" method correctly updates the MedicalRecord location.
+     * - Objective: To ensure the "setLocation()" method correctly updates the
+     * MedicalRecord location.
      * - Actual result: setLocation should update the Location.
-     * - Expected result: The setLocation should update the Location to the new expected Location.
+     * - Expected result: The setLocation should update the Location to the new
+     * expected Location.
      */
     @Test
     public void testSetLocation() {
@@ -68,9 +73,12 @@ public class MedicalRecordTest {
 
     /*
      * testGetTreatmentDetails:
-     * - Objective: To ensure the "getTreatmentDetails()" method correctly returns the actual treatment details.
-     * - Actual result: getTreatmentDetails should return the correct treatment details.
-     * - Expected result: The returned treatment details should match the one set during setup.
+     * - Objective: To ensure the "getTreatmentDetails()" method correctly returns
+     * the actual treatment details.
+     * - Actual result: getTreatmentDetails should return the correct treatment
+     * details.
+     * - Expected result: The returned treatment details should match the one set
+     * during setup.
      */
     @Test
     public void testGetTreatmentDetails() {
@@ -80,9 +88,11 @@ public class MedicalRecordTest {
 
     /*
      * testSetTreatmentDetails:
-     * - Objective: To ensure the "setTreatmentDetails()" method correctly updates the treatment details.
+     * - Objective: To ensure the "setTreatmentDetails()" method correctly updates
+     * the treatment details.
      * - Actual result: setTreatmentDetails should update the treatment details.
-     * - Expected result: The setTreatmentDetails should update the treatment details to the new expected treatment details.
+     * - Expected result: The setTreatmentDetails should update the treatment
+     * details to the new expected treatment details.
      */
     @Test
     public void testSetTreatmentDetails() {
@@ -94,9 +104,12 @@ public class MedicalRecordTest {
 
     /*
      * testGetDateOfTreatment:
-     * - Objective: To ensure the "getDateOfTreatment()" method correctly returns the actual date of treatment.
-     * - Actual result: getDateOfTreatment should return the correct date of treatment.
-     * - Expected result: The returned date of treatment should match the one set during setup.
+     * - Objective: To ensure the "getDateOfTreatment()" method correctly returns
+     * the actual date of treatment.
+     * - Actual result: getDateOfTreatment should return the correct date of
+     * treatment.
+     * - Expected result: The returned date of treatment should match the one set
+     * during setup.
      */
     @Test
     public void testGetDateOfTreatment() {
@@ -106,9 +119,11 @@ public class MedicalRecordTest {
 
     /*
      * testSetDateOfTreatment:
-     * - Objective: To ensure the "setDateOfTreatment()" method correctly updates the date of treatment.
+     * - Objective: To ensure the "setDateOfTreatment()" method correctly updates
+     * the date of treatment.
      * - Actual result: setDateOfTreatment should update date of treatment.
-     * - Expected result: The setDateOfTreatment should update the date of treatment to the new expected date of treatment.
+     * - Expected result: The setDateOfTreatment should update the date of treatment
+     * to the new expected date of treatment.
      */
     @Test
     public void testSetDateOfTreatment() {
@@ -120,9 +135,11 @@ public class MedicalRecordTest {
 
     /*
      * testSetDateOfTreatmentWithValidFormat:
-     * - Objective: To check if setDateOfTreatment method accepts a valid date format.
+     * - Objective: To check if setDateOfTreatment method accepts a valid date
+     * format.
      * - Actual result: setDateOfTreatment accepts valid date format.
-     * - Expected result: setDateOfTreatment should not throw an exception with valid date format.
+     * - Expected result: setDateOfTreatment should not throw an exception with
+     * valid date format.
      */
     @Test
     public void testSetDateOfTreatmentWithValidFormat() {
@@ -131,9 +148,11 @@ public class MedicalRecordTest {
 
     /*
      * testSetDateOfBirthWithInvalidFormat:
-     * - Objective: To check if setDateOfTreatment method throws an exception with an invalid date format.
+     * - Objective: To check if setDateOfTreatment method throws an exception with
+     * an invalid date format.
      * - Actual result: IllegalArgumentException thrown.
-     * - Expected result: setDateOfTreatment should throw an IllegalArgumentException with invalid date format.
+     * - Expected result: setDateOfTreatment should throw an
+     * IllegalArgumentException with invalid date format.
      */
     @Test
     public void testSetDateOfBirthWithInvalidFormat() {
@@ -155,9 +174,11 @@ public class MedicalRecordTest {
 
     /*
      * testSetDateOfBirthWithNotADate:
-     * - Objective: To check if setDateOfTreatment method throws an exception with invalid non-date input.
+     * - Objective: To check if setDateOfTreatment method throws an exception with
+     * invalid non-date input.
      * - Actual result: IllegalArgumentException thrown.
-     * - Expected result: setDateOfTreatment should throw an IllegalArgumentException with invalid non-date input.
+     * - Expected result: setDateOfTreatment should throw an
+     * IllegalArgumentException with invalid non-date input.
      */
     @Test
     public void testSetDateOfBirthWithNotADate() {
