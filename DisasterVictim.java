@@ -11,7 +11,7 @@ The class provides robust validation for input data, ensuring accurate and relia
 making it a comprehensive and well-structured model for disaster management scenarios.
 */
 
-package edu.ucalgary.oop;
+// package edu.ucalgary.oop;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +29,6 @@ public class DisasterVictim extends Person {
     private final String ENTRY_DATE;
     private ArrayList<Supply> personalBelongings;
     private String gender;
-    private String genderFile;
-    private String supply;
     private ArrayList<Diet> dietaryRestrictions;
 
     enum Diet {
@@ -143,7 +141,7 @@ public class DisasterVictim extends Person {
 
     public void setGender(String gender) throws IllegalArgumentException {
         try {
-            List<String> genderOptions = new FileManager(genderFile).getGenderOptions();
+            List<String> genderOptions = new FileManager().readConfigurationFile();
             if (genderOptions.contains(gender.toLowerCase())) {
                 this.gender = gender.toLowerCase();
                 return;
@@ -162,7 +160,7 @@ public class DisasterVictim extends Person {
             int day = Integer.parseInt(dateParts[2]);
 
             if (!(year >= 1920 && year <= 2025 && month >= 1 && month <= 12 && day >= 1 && day <= 31)) {
-                throw new IllegalArgumentException("Invalid inquiry date: " + dateOfBirth);
+                throw new IllegalArgumentException("Invalid date of birth: " + dateOfBirth);
             }
 
             this.dateOfBirth = dateOfBirth;
@@ -322,6 +320,7 @@ public class DisasterVictim extends Person {
             dietaryRestrictions = new ArrayList<>();
         }
         dietaryRestrictions.add(restriction);
+
     }
 
 }

@@ -10,8 +10,8 @@ public class FileManagerTest {
 
     @Test
     public void testReadConfigurationFile() throws IOException {
-        FileManager fileManager = new FileManager("GenderOptions.txt");
-        List<String> genderOptions = fileManager.readConfigurationFile("GenderOptions.txt");
+        FileManager fileManager = new FileManager();
+        List<String> genderOptions = fileManager.readConfigurationFile();
         
         // Check if the number of genders read is greater than 0
         assertTrue("At least one gender should be read from the file", genderOptions.size() > 0);
@@ -19,7 +19,8 @@ public class FileManagerTest {
 
     @Test
     public void testOpenConfigurationFile() {
-        FileManager fileManager = new FileManager("NonExistentFile.txt");
+        FileManager fileManager = new FileManager();
+        fileManager.setGenderFile("NonExistentFile.txt");
         try {
             fileManager.openConfigurationFile();
             fail("Expected IOException to be thrown");
