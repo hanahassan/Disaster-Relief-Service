@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class SupplyTest {
     String testExpectedType = "Food";
     int testExpectedQuantity = 20;
-    private Supply supply = new Supply(newExpectedType, newExpectedQuantity);
+    private Supply supply = new Supply(testExpectedType, testExpectedQuantity);
 
     /*
      * testObjectCreation:
@@ -34,7 +34,7 @@ public class SupplyTest {
      */
     @Test
     public void testGetType() {
-        assertEquals("getType should return the correct type", newExpectedType, supply.getType());
+        assertEquals("getType should return the correct type", testExpectedType, supply.getType());
     }
 
     /*
@@ -59,7 +59,7 @@ public class SupplyTest {
      */
     @Test
     public void testGetQuantity() {
-        assertEquals("getQuantity should return the correct quantity", newExpectedQuantity, supply.getQuantity());
+        assertEquals("getQuantity should return the correct quantity", testExpectedQuantity, supply.getQuantity());
     }
 
     /*
@@ -89,7 +89,7 @@ public class SupplyTest {
     @Test
     public void testDecreaseQuantity() {
         supply.decreaseQuantity(5);
-        assertEquals("decreaseQuantity should reduce the quantity by 5", newExpectedQuantity - 5, supply.getQuantity());
+        assertEquals("decreaseQuantity should reduce the quantity by 5", testExpectedQuantity - 5, supply.getQuantity());
     }
 
 }
