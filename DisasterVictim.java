@@ -13,26 +13,42 @@ making it a comprehensive and well-structured model for disaster management scen
 
 package edu.ucalgary.oop;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisasterVictim {
+public class DisasterVictim extends Person {
     // Variables
-    public String firstName;
-    private String lastName;
     private String dateOfBirth;
-    private String gender;
+    private int approximateAge;
     private String comments;
-    protected int ASSIGNED_SOCIAL_ID;
-    protected static int nextSocialID = 1;
+    private static final int SOCIAL_ID = 0;
+    private final int ASSIGNED_SOCIAL_ID;
     private ArrayList<MedicalRecord> medicalRecords;
     private ArrayList<FamilyRelation> familyConnections;
-    private String ENTRY_DATE;
+    private final String ENTRY_DATE;
     private ArrayList<Supply> personalBelongings;
+    private String gender;
+    private String genderFile;
+    private String supply;
+    private ArrayList<Diet> dietaryRestrictions;
+
+    enum Diet {
+        AVML,
+        DBML,
+        GFML,
+        KSML,
+        LSML,
+        MOML,
+        PFML,
+        VGML,
+        VJML
+    }
 
     // Constructor
-    public DisasterVictim(String firstName, String ENTRY_DATE) {
-        setFirstName(firstName);
+    public DisasterVictim(String firstName, String ENTRY_DATE, int approximateAge) throws IllegalArgumentException {
+        super(firstName);
+        setApproximateAge(approximateAge);
 
         if (ENTRY_DATE.matches("\\d{4}-\\d{2}-\\d{2}")) {
             String[] dateParts = ENTRY_DATE.split("-");
@@ -47,29 +63,47 @@ public class DisasterVictim {
             throw new IllegalArgumentException("Invalid entry date: " + ENTRY_DATE);
         }
 
-        this.ASSIGNED_SOCIAL_ID = nextSocialID++;
+        this.ASSIGNED_SOCIAL_ID = SOCIAL_ID++;
+
+    }
+
+    public DisasterVictim(String firstName, String ENTRY_DATE, String dateOfBirth) throws IllegalArgumentException {
+        super(firstName);
+        setDateOfBirth(dateOfBirth);
+
+        if (ENTRY_DATE.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            String[] dateParts = ENTRY_DATE.split("-");
+            int year = Integer.parseInt(dateParts[0]);
+            int month = Integer.parseInt(dateParts[1]);
+            int day = Integer.parseInt(dateParts[2]);
+            if (!(year >= 1920 && year <= 2050 && month >= 1 && month <= 12 && day >= 1 && day <= 31)) {
+                throw new IllegalArgumentException("Invalid entry date: " + ENTRY_DATE);
+            }
+            this.ENTRY_DATE = ENTRY_DATE;
+        } else {
+            throw new IllegalArgumentException("Invalid entry date: " + ENTRY_DATE);
+        }
+
+        this.ASSIGNED_SOCIAL_ID = SOCIAL_ID++;
 
     }
 
     // Getters
-    public String getFirstName() {
-        return this.firstName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
 
     public String getDateOfBirth() {
         return this.dateOfBirth;
+    }
+
+    public int getApproximateAge() {
+        return this.approximateAge;
     }
 
     public String getComments() {
         return this.comments;
     }
 
-    public MedicalRecord[] getMedicalRecords() {
-        return this.medicalRecords.toArray(new MedicalRecord[0]);
+    public ArrayList<MedicalRecord> getMedicalRecords() {
+        return medicalRecords;
     }
 
     public String getEntryDate() {
@@ -77,57 +111,49 @@ public class DisasterVictim {
     }
 
     public int getAssignedSocialID() {
-        return this.ASSIGNED_SOCIAL_ID + 2;
+        return this.ASSIGNED_SOCIAL_ID;
     }
 
-    public Supply[] getPersonalBelongings() {
-        return this.personalBelongings.toArray(new Supply[0]);
-    } // check this works
+    public ArrayList<Supply> getPersonalBelongings() {
+        return personalBelongings;
+    }
 
-    public FamilyRelation[] getFamilyConnections() {
-        return this.familyConnections.toArray(new FamilyRelation[0]);
+    public ArrayList<FamilyRelation> getFamilyConnections() {
+        return familyConnections;
     }
 
     public String getGender() {
         return this.gender;
     }
 
+    // Method to get dietary restrictions
+    public ArrayList<Diet> getDietaryRestrictions() {
+        return dietaryRestrictions;
+    }
+
     // Setters
 
-    public void setFirstName(String firstName) throws IllegalArgumentException {
-        if (firstName instanceof String) {
-            this.firstName = firstName;
-            return;
-        }
-        throw new IllegalArgumentException("First name cannot be null");
-    }
-
-    public void setLastName(String lastName) throws IllegalArgumentException {
-        if (lastName instanceof String) {
-            this.lastName = lastName;
-            return;
-        }
-        throw new IllegalArgumentException("Last name cannot be null");
-    }
-
-    public void setComments(String comments) throws IllegalArgumentException {
+    public void setComments(String comments) {
         if (comments instanceof String) {
             this.comments = comments;
             return;
         }
-        throw new IllegalArgumentException("Comments cannot be null");
-
+        System.out.println("Comments cannot be null");
     }
 
     public void setGender(String gender) throws IllegalArgumentException {
-        if (gender instanceof String) {
-            this.gender = gender.toLowerCase();
-            return;
+        try {
+            List<String> genderOptions = new FileManager(genderFile).getGenderOptions();
+            if (genderOptions.contains(gender.toLowerCase())) {
+                this.gender = gender.toLowerCase();
+                return;
+            }
+            throw new IllegalArgumentException("Gender not found in the options file.");
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Error reading gender options file.");
         }
-        throw new IllegalArgumentException("gender cannot be null");
     }
 
-    // Date of Birth
     public void setDateOfBirth(String dateOfBirth) throws IllegalArgumentException {
         if (dateOfBirth.matches("\\d{4}-\\d{2}-\\d{2}")) {
             String[] dateParts = dateOfBirth.split("-");
@@ -135,7 +161,7 @@ public class DisasterVictim {
             int month = Integer.parseInt(dateParts[1]);
             int day = Integer.parseInt(dateParts[2]);
 
-            if (!(year >= 1920 && year <= 2050 && month >= 1 && month <= 12 && day >= 1 && day <= 31)) {
+            if (!(year >= 1920 && year <= 2025 && month >= 1 && month <= 12 && day >= 1 && day <= 31)) {
                 throw new IllegalArgumentException("Invalid inquiry date: " + dateOfBirth);
             }
 
@@ -146,10 +172,17 @@ public class DisasterVictim {
 
     }
 
+    public void setApproximateAge(int approximateAge) throws IllegalArgumentException {
+        if (approximateAge < 0 || approximateAge > 120) {
+            throw new IllegalArgumentException("Approximate age must be between 0 and 120.");
+        }
+        this.approximateAge = approximateAge;
+    }
+
     // Mecical Recods
-    public void setMedicalRecords(MedicalRecord[] medicalRecords) throws IllegalArgumentException {
+    public void setMedicalRecords(ArrayList<MedicalRecord> medicalRecords) {
         if (medicalRecords == null) {
-            throw new IllegalArgumentException("Medical records cannot be null");
+            System.out.println("Medical records cannot be null");
         } else {
             this.medicalRecords = new ArrayList<>(List.of(medicalRecords));
         }
@@ -157,7 +190,7 @@ public class DisasterVictim {
 
     public void addMedicalRecord(MedicalRecord medicalRecord) {
         if (medicalRecord == null) {
-            throw new IllegalArgumentException("You can't add null medical records");
+            System.out.println("You can't add null medical records");
         } else {
             if (this.medicalRecords == null) {
                 this.medicalRecords = new ArrayList<>();
@@ -167,43 +200,44 @@ public class DisasterVictim {
     }
 
     // Personal Belongings
-    public void setPersonalBelongings(Supply[] supplies) throws IllegalArgumentException {
+    public void setPersonalBelongings(ArrayList<Supply> supplies) {
         if (supplies == null) {
-            throw new IllegalArgumentException("Supploes records cannot be null");
+            System.out.println("Supplies records cannot be null");
         }
         this.personalBelongings = new ArrayList<>(List.of(supplies));
     }
 
-    public void addPersonalBelonging(Supply supply) throws IllegalArgumentException {
+    public void addPersonalBelonging(Supply supply, Location location) {
         if (supply != null) {
             if (this.personalBelongings == null) {
                 this.personalBelongings = new ArrayList<>();
             }
             this.personalBelongings.add(supply);
+            location.supplyTracker(supply);
             return;
         }
-        throw new IllegalArgumentException("You can't add null supplies");
+        System.out.println("You can't add null supplies");
     }
 
-    public void removePersonalBelonging(Supply supply) throws IllegalArgumentException {
+    public void removePersonalBelonging(Supply supply) {
         if (this.personalBelongings.contains(supply)) {
             this.personalBelongings.remove(supply);
             return;
         }
-        throw new IllegalArgumentException("Supply not found");
+        System.out.println("Supply not found");
     }
 
     // Family Connections
-    public void setFamilyConnections(FamilyRelation[] relations) throws IllegalArgumentException {
+    public void setFamilyConnections(ArrayList<FamilyRelation> relations) {
         if (relations == null) {
-            throw new IllegalArgumentException("Family Relation records cannot be null");
+            System.out.println("Family Relation records cannot be null");
         }
         this.familyConnections = new ArrayList<>(List.of(relations));
     }
 
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
         if (familyConnection == null) {
-            throw new IllegalArgumentException("You can't add null family connections");
+            System.out.println("You can't add null family connections");
         } else {
             if (this.familyConnections == null) {
                 this.familyConnections = new ArrayList<>();
@@ -283,8 +317,11 @@ public class DisasterVictim {
         return false;
     }
 
-    public void allocateSupply(Supply supply, Location location) {
-        location.supplyTracker(supply);
+    public void addDietaryRestriction(Diet restriction) {
+        if (dietaryRestrictions == null) {
+            dietaryRestrictions = new ArrayList<>();
+        }
+        dietaryRestrictions.add(restriction);
     }
 
 }
