@@ -1,8 +1,15 @@
-/*
-Copyright Ann Barcomb and Khawla Shnaikat, 2024
-Licensed under GPL v3
-See LICENSE.txt for more information.
-*/
+/** 
+@author: Hana Hassan
+@ucid: 30172447
+@version: 1.2
+@since: 1.0
+
+The InquirerTest class contains unit tests for the Inquirer class, which represents individuals making inquiries during disasters. 
+It verifies the functionality of various methods in the Inquirer class.
+The Inquirer class encapsulates information about individuals making inquiries, including their first name, last name, phone number, and message.
+It ensures accurate recording and retrieval of information about the individuals making inquiries.
+Unit tests in this class cover object creation, getter and setter methods for first name, last name, phone number, and message. 
+**/
 package edu.ucalgary.oop;
 
 import org.junit.Test;
