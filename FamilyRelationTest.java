@@ -5,7 +5,6 @@ See LICENSE.txt for more information.
 */
 package edu.ucalgary.oop;
 
-
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -20,7 +19,7 @@ public class FamilyRelationTest {
     public void testObjectCreation() {
         assertNotNull(testFamilyRelationObject);
     }
-	
+    
     @Test
     public void testSetAndGetPersonOne() {
         DisasterVictim newPersonOne = new DisasterVictim("New Person", "2024-03-21");
@@ -40,5 +39,33 @@ public class FamilyRelationTest {
         String newRelationship = "parent";
         testFamilyRelationObject.setRelationshipTo(newRelationship);
         assertEquals("setRelationshipTo should update the relationship", newRelationship, testFamilyRelationObject.getRelationshipTo());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorDuplicateRelationship() {
+        // Attempt to create a FamilyRelation with duplicate relationship
+        new FamilyRelation(personOne, relationshipTo, personTwo);
+    }
+
+    @Test
+    public void testDeleteRelationship() {
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        FamilyRelation relation = new FamilyRelation(personOne, "parent", personThree);
+        relation.deleteRelationship(personOne, personThree);
+        assertFalse("Delete relationship should remove the relationship", personOne.hasRelation(personThree));
+    }
+
+    @Test
+    public void testCheckExisting() {
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        FamilyRelation relation = new FamilyRelation(personOne, "parent", personThree);
+        assertTrue("Check existing should return true for existing relationship", relation.checkExisting(personOne, personThree));
+    }
+
+    @Test
+    public void testCheckSeriesOfRelationship() {
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        FamilyRelation relation = new FamilyRelation(personOne, "parent", personTwo);
+        assertFalse("Check series of relationship should return false for different relationship", relation.checkSeriesOfRelationship(personOne, personThree));
     }
 }

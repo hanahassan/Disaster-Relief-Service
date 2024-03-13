@@ -4,7 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class InquirerTest {
-    
+
     // Define the values which will be used for tests
     private String expectedFirstName = "John";
     private String expectedLastName = "Doe";
@@ -25,7 +25,8 @@ public class InquirerTest {
     @Test
     public void testGetFirstName() {
         // Ensure getFirstName() method returns the correct first name
-        assertEquals("getFirstName() should return the inquirer's first name", expectedFirstName, inquirer.getFirstName());
+        assertEquals("getFirstName() should return the inquirer's first name", expectedFirstName,
+                inquirer.getFirstName());
     }
 
     // Test for getLastName() method
@@ -57,7 +58,8 @@ public class InquirerTest {
     @Test
     public void testGetServicesPhoneNum() {
         // Ensure getServicesPhoneNum() method returns the correct services phone number
-        assertEquals("getServicesPhoneNum() should return the correct services phone number", expectedPhoneNumber, inquirer.getServicesPhoneNum());
+        assertEquals("getServicesPhoneNum() should return the correct services phone number", expectedPhoneNumber,
+                inquirer.getServicesPhoneNum());
     }
 
     // Test for getInfo() method
