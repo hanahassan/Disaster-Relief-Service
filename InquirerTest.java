@@ -1,3 +1,18 @@
+/** 
+@author: Hana Hassan
+@ucid: 30172447
+@version: 1.2
+@since: 1.0
+
+The MedicalRecordTest class contains unit tests for the MedicalRecord class, which represents medical records for disaster victims. 
+It verifies the functionality of various methods in the MedicalRecord class.
+MedicalRecord class encapsulates information about the treatment of a disaster victim at a specific location. 
+It includes details such as the location where treatment occurred, treatment details, and the date of treatment. 
+The class ensures accurate recording and retrieval of medical treatment information for disaster victims.
+Unit tests in this class cover object creation, getter and setter methods for location, treatment details, and date of treatment. 
+Additionally, it tests the validation of date formats in the setDateOfTreatment method, ensuring proper exception handling for both valid and invalid date formats.
+
+*/
 package edu.ucalgary.oop;
 
 import org.junit.*;

@@ -14,6 +14,7 @@ in response to disasters and emergencies.
 package edu.ucalgary.oop;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReliefService {
@@ -121,15 +122,18 @@ public class ReliefService {
         return String.join("\n", interactionHistory);
     }
 
-    // Method to search for DisasterVictims based on a part of their name
-    public ArrayList<DisasterVictim> searchDisasterVictims(String partOfName) {
-        // Convert the partOfName to lowercase for case-insensitive search
-        String searchName = partOfName.toLowerCase();
-
-        // Filter DisasterVictims whose names contain the searchName
-        return DisasterVictim.getRegistry().stream()
-                .filter(victim -> victim.getFullName().toLowerCase().contains(searchName))
-                .collect(Collectors.toCollection(ArrayList::new));
+    /**
+     * Search for disaster victims by a part of their name, regardless of case
+     * sensitivity.
+     * 
+     * @param searchName The part of the name to search for.
+     * @return A list of matching disaster victims.
+     */
+    public List<DisasterVictim> searchDisasterVictims(String searchName) {
+        String searchNameLowerCase = searchName.toLowerCase();
+        return lastKnownLocation.getOccupants().stream()
+                .filter(victim -> victim.getFirstName().toLowerCase().contains(searchNameLowerCase))
+                .collect(Collectors.toList());
     }
 
     // Method to determine the mode of the relief worker
