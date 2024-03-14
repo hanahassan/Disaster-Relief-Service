@@ -184,6 +184,13 @@ public class LocationTest {
         assertEquals("Supply quantity should decrease by 1 after tracking", 9, supply.getQuantity());
     }
 
+    // Test for getting the first name of an occupant from a location
+    // Objective: Ensure the "getFirstName()" method correctly returns the first
+    // name of an occupant from a location.
+    // Actual result: The method returns the first name of the first occupant added
+    // to the location.
+    // Expected result: The method should return the first name of the specified
+    // occupant, which is "John".
     @Test
     public void testGetFirstName() {
         Location location = new Location("Shelter A", "123 Main St");
@@ -194,6 +201,14 @@ public class LocationTest {
 
         assertEquals("getFirstName should return the first name of an occupant", "John", location.getFirstName());
     }
+
+    // Test for getting the last name of an occupant from a location
+    // Objective: Ensure the "getLastName()" method correctly returns the last name
+    // of an occupant from a location.
+    // Actual result: The method returns null for the last name of an occupant from
+    // a location.
+    // Expected result: The method should return the last name of the specified
+    // occupant, which is null (not provided in the test data).
 
     @Test
     public void testGetLastName() {
