@@ -1,7 +1,7 @@
 /** 
 @author: Hana Hassan
 @ucid: 30172447
-@version: 1.7
+@version: 1.9
 @since: 1.0
 
  The ReliefServiceTest class contains unit tests for the ReliefService class, which manages relief efforts
@@ -35,7 +35,7 @@ public class ReliefServiceTest {
     public void setUp() {
         // Initialize objects before each test
         inquirer = new Inquirer("Mary", "Smith", "9876543210", "Urgent situation");
-        missingPerson = new DisasterVictim("David Smith", "2024-02-20");
+        missingPerson = new DisasterVictim("David Smith", "2024-02-20", "2004-05-23");
         lastKnownLocation = new Location("Downtown", "123 Main St");
         reliefService = new ReliefService(inquirer, missingPerson, newValidDate, newExpectedInfoProvided,
                 lastKnownLocation);
@@ -213,9 +213,9 @@ public class ReliefServiceTest {
     @Test
     public void testSearchDisasterVictims() {
         // Add disaster victims to the location for testing
-        DisasterVictim praveen = new DisasterVictim("Praveen Kumar", "2024-03-10");
-        DisasterVictim oprah = new DisasterVictim("Oprah Winfrey", "2024-03-11");
-        DisasterVictim john = new DisasterVictim("John Doe", "2024-03-12");
+        DisasterVictim praveen = new DisasterVictim("Praveen Kumar", "2024-03-10", 12);
+        DisasterVictim oprah = new DisasterVictim("Oprah Winfrey", "2024-03-11", 34);
+        DisasterVictim john = new DisasterVictim("John Doe", "2024-03-12", 34);
         lastKnownLocation.addOccupant(praveen);
         lastKnownLocation.addOccupant(oprah);
         lastKnownLocation.addOccupant(john);

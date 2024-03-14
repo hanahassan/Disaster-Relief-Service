@@ -16,6 +16,8 @@ package edu.ucalgary.oop;
 public class Supply {
     private String type;
     private int quantity;
+    private Location location;
+
 
     // constructor
     public Supply(String type, int quantity) {
@@ -41,6 +43,14 @@ public class Supply {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     /**

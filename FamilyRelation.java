@@ -19,7 +19,8 @@ public class FamilyRelation {
     private String relationshipTo;
     private DisasterVictim personTwo;
 
-    // Constructor for FamilyRelation, takes in two DisasterVictims and a relationship
+    // Constructor for FamilyRelation, takes in two DisasterVictims and a
+    // relationship
     public FamilyRelation(DisasterVictim personOne, String relationshipTo, DisasterVictim personTwo) {
         if (checkExisting(personOne, personTwo)) {
             throw new IllegalArgumentException("Duplicate relationship already exists.");
@@ -71,8 +72,10 @@ public class FamilyRelation {
     }
 
     // Method to check if adding a relationship would create a duplicate
-    public boolean checkSeriesOfRelationship(DisasterVictim personOne, DisasterVictim personTwo) {
-        return Objects.equals(this.personOne, personOne) && Objects.equals(this.personTwo, personTwo)
+    public boolean checkSeriesOfRelationship(DisasterVictim personOne, String relationshipTo, DisasterVictim personTwo) {
+        return Objects.equals(this.personOne, personOne)
+                && Objects.equals(this.personTwo, personTwo)
                 && Objects.equals(this.relationshipTo, relationshipTo);
     }
+
 }

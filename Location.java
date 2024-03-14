@@ -112,5 +112,24 @@ public class Location {
             System.out.println("Supply not found in the location.");
         }
     }
+    
+    public String getFirstName() {
+        for (DisasterVictim victim : occupants) {
+            if (victim.getFirstName() != null) {
+                return victim.getFirstName();
+            }
+        }
+        return null;
+    }
+    
+    public String getLastName() {
+        for (DisasterVictim victim : occupants) {
+            if (victim.getLastName() != null) {
+                return victim.getLastName();
+            }
+        }
+        return null;
+    }
+    
 
 }

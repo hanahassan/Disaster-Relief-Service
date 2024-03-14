@@ -11,18 +11,19 @@ The class provides robust validation for input data, ensuring accurate and relia
 making it a comprehensive and well-structured model for disaster management scenarios.
 */
 
-// package edu.ucalgary.oop;
+package edu.ucalgary.oop;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class DisasterVictim extends Person {
     // Variables
     private String dateOfBirth;
     private int approximateAge;
     private String comments;
-    private static final int SOCIAL_ID = 0;
+    private static int counter = 0;
     private final int ASSIGNED_SOCIAL_ID;
     private ArrayList<MedicalRecord> medicalRecords;
     private ArrayList<FamilyRelation> familyConnections;
@@ -31,7 +32,7 @@ public class DisasterVictim extends Person {
     private String gender;
     private ArrayList<Diet> dietaryRestrictions;
 
-    enum Diet {
+    public enum Diet {
         AVML,
         DBML,
         GFML,
@@ -61,7 +62,10 @@ public class DisasterVictim extends Person {
             throw new IllegalArgumentException("Invalid entry date: " + ENTRY_DATE);
         }
 
-        this.ASSIGNED_SOCIAL_ID = SOCIAL_ID++;
+        this.ASSIGNED_SOCIAL_ID = counter++;
+        this.medicalRecords = new ArrayList<>();
+        this.familyConnections = new ArrayList<>();
+        this.personalBelongings = new ArrayList<>();
 
     }
 
@@ -82,7 +86,10 @@ public class DisasterVictim extends Person {
             throw new IllegalArgumentException("Invalid entry date: " + ENTRY_DATE);
         }
 
-        this.ASSIGNED_SOCIAL_ID = SOCIAL_ID++;
+        this.ASSIGNED_SOCIAL_ID = counter++;
+        this.medicalRecords = new ArrayList<>();
+        this.familyConnections = new ArrayList<>();
+        this.personalBelongings = new ArrayList<>();
 
     }
 
@@ -182,7 +189,7 @@ public class DisasterVictim extends Person {
         if (medicalRecords == null) {
             System.out.println("Medical records cannot be null");
         } else {
-            this.medicalRecords = new ArrayList<>(List.of(medicalRecords));
+            this.medicalRecords = new ArrayList<>(medicalRecords);
         }
     }
 
@@ -202,7 +209,7 @@ public class DisasterVictim extends Person {
         if (supplies == null) {
             System.out.println("Supplies records cannot be null");
         }
-        this.personalBelongings = new ArrayList<>(List.of(supplies));
+        this.personalBelongings = new ArrayList<>(supplies);
     }
 
     public void addPersonalBelonging(Supply supply, Location location) {
@@ -211,11 +218,16 @@ public class DisasterVictim extends Person {
                 this.personalBelongings = new ArrayList<>();
             }
             this.personalBelongings.add(supply);
-            location.supplyTracker(supply);
-            return;
+            if (location != null) {
+                location.supplyTracker(supply);
+            } else {
+                System.out.println("Location is null. Cannot track supply.");
+            }
+        } else {
+            System.out.println("You can't add null supplies");
         }
-        System.out.println("You can't add null supplies");
     }
+    
 
     public void removePersonalBelonging(Supply supply) {
         if (this.personalBelongings.contains(supply)) {
@@ -230,7 +242,7 @@ public class DisasterVictim extends Person {
         if (relations == null) {
             System.out.println("Family Relation records cannot be null");
         }
-        this.familyConnections = new ArrayList<>(List.of(relations));
+        this.familyConnections = new ArrayList<>(relations);
     }
 
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
@@ -244,14 +256,14 @@ public class DisasterVictim extends Person {
             if (!checkDuplicate(familyConnection)) {
                 this.familyConnections.add(familyConnection);
                 // Check series of relationships and add extra if needed
-                checkSeriesOfRelationship(familyConnection);
+                checkSeriesOfRelationships();
             } else {
                 throw new IllegalArgumentException("Duplicate relationship already exists.");
             }
         }
     }
 
-    private boolean checkDuplicate(FamilyRelation newRelation) {
+    public boolean checkDuplicate(FamilyRelation newRelation) {
         if (familyConnections != null) {
             for (FamilyRelation relation : familyConnections) {
                 if (relation.checkExisting(newRelation.getPersonOne(), newRelation.getPersonTwo())) {
@@ -262,19 +274,24 @@ public class DisasterVictim extends Person {
         return false;
     }
 
-    private void checkSeriesOfRelationship(FamilyRelation newRelation) {
+    private void checkSeriesOfRelationships() {
         if (familyConnections != null) {
-            for (FamilyRelation relation : familyConnections) {
-                if (relation.checkSeriesOfRelationship(newRelation.getPersonOne(), newRelation.getPersonTwo())) {
-                    // If series of relationships detected, add the inverse relationship
-                    DisasterVictim personOne = newRelation.getPersonOne();
-                    DisasterVictim personTwo = newRelation.getPersonTwo();
-                    addFamilyConnection(new FamilyRelation(personTwo, newRelation.getRelationshipTo(), personOne));
-                    return;
+            for (int i = 0; i < familyConnections.size(); i++) {
+                FamilyRelation newRelation = familyConnections.get(i);
+                for (int j = i + 1; j < familyConnections.size(); j++) {
+                    FamilyRelation existingRelation = familyConnections.get(j);
+                    if (existingRelation.checkSeriesOfRelationship(newRelation.getPersonOne(), newRelation.getRelationshipTo(), newRelation.getPersonTwo())) {
+                        // If series of relationships detected, add the inverse relationship
+                        DisasterVictim personOne = newRelation.getPersonOne();
+                        DisasterVictim personTwo = existingRelation.getPersonTwo();
+                        addFamilyConnection(new FamilyRelation(personOne, newRelation.getRelationshipTo(), personTwo));
+                        return;
+                    }
                 }
             }
         }
     }
+    
 
     public void removeFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
         if (familyConnection == null) {
@@ -320,7 +337,30 @@ public class DisasterVictim extends Person {
             dietaryRestrictions = new ArrayList<>();
         }
         dietaryRestrictions.add(restriction);
-
     }
+
+    public boolean enterFirstName(String name, List<DisasterVictim> occupants) {
+        if (name != null && !name.isEmpty()) {
+            for (DisasterVictim victim : occupants) {
+                if (victim.getFirstName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean enterLastName(String name, List<DisasterVictim> occupants) {
+        if (name != null && !name.isEmpty()) {
+            for (DisasterVictim victim : occupants) {
+                if (victim.getLastName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
 
 }

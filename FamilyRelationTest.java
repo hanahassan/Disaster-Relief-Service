@@ -18,8 +18,8 @@ import static org.junit.Assert.*;
 public class FamilyRelationTest {
 
     // Define test objects and values
-    private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19");
-    private DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20");
+    private DisasterVictim personOne = new DisasterVictim("John Dalan", "2024-01-19", "1990-01-01");
+    private DisasterVictim personTwo = new DisasterVictim("Jane Dalan", "2024-02-20", 32);
     private String relationshipTo = "sibling";
     private FamilyRelation testFamilyRelationObject = new FamilyRelation(personOne, relationshipTo, personTwo);
     
@@ -39,7 +39,7 @@ public class FamilyRelationTest {
     // Expected result: The setPersonOne() method should update personOne to the new value, and getPersonOne() should return the updated value.
     @Test
     public void testSetAndGetPersonOne() {
-        DisasterVictim newPersonOne = new DisasterVictim("New Person", "2024-03-21");
+        DisasterVictim newPersonOne = new DisasterVictim("New Person", "2024-03-21", "1990-01-01");
         testFamilyRelationObject.setPersonOne(newPersonOne);
         assertEquals("setPersonOne should update personOne", newPersonOne, testFamilyRelationObject.getPersonOne());
     }
@@ -50,7 +50,7 @@ public class FamilyRelationTest {
     // Expected result: The setPersonTwo() method should update personTwo to the new value, and getPersonTwo() should return the updated value.
     @Test
     public void testSetAndGetPersonTwo() {
-        DisasterVictim newPersonTwo = new DisasterVictim("Another Person", "2024-04-22");
+        DisasterVictim newPersonTwo = new DisasterVictim("Another Person", "2024-04-22", 1);
         testFamilyRelationObject.setPersonTwo(newPersonTwo);
         assertEquals("setPersonTwo should update personTwo", newPersonTwo, testFamilyRelationObject.getPersonTwo());
     }
@@ -82,7 +82,7 @@ public class FamilyRelationTest {
     // Expected result: The deleteRelationship() method should remove the specified relationship between two persons.
     @Test
     public void testDeleteRelationship() {
-        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23", 1);
         FamilyRelation relation = new FamilyRelation(personOne, "parent", personThree);
         relation.deleteRelationship(personOne, personThree);
         assertFalse("Delete relationship should remove the relationship", personOne.hasRelation(personThree));
@@ -94,7 +94,7 @@ public class FamilyRelationTest {
     // Expected result: The checkExisting() method should return true when there is an existing relationship between two persons.
     @Test
     public void testCheckExisting() {
-        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23", 1);
         FamilyRelation relation = new FamilyRelation(personOne, "parent", personThree);
         assertTrue("Check existing should return true for existing relationship", relation.checkExisting(personOne, personThree));
     }
@@ -105,8 +105,8 @@ public class FamilyRelationTest {
     // Expected result: The checkSeriesOfRelationship() method should return false when the relationship between two persons is different from the specified series.
     @Test
     public void testCheckSeriesOfRelationship() {
-        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23");
+        DisasterVictim personThree = new DisasterVictim("Alice", "2024-05-23", 1);
         FamilyRelation relation = new FamilyRelation(personOne, "parent", personTwo);
-        assertFalse("Check series of relationship should return false for different relationship", relation.checkSeriesOfRelationship(personOne, personThree));
+        assertFalse("Check series of relationship should return false for different relationship", relation.checkSeriesOfRelationship(personOne, "", personThree));
     }
 }
