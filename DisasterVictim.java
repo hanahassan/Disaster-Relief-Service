@@ -125,7 +125,7 @@ public class DisasterVictim extends Person {
 
     public ArrayList<FamilyRelation> getFamilyConnections() {
         return familyConnections;
-    }
+    } 
 
     public String getGender() {
         return this.gender;
