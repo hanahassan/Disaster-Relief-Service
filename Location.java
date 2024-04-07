@@ -13,6 +13,7 @@ It enabling the addition and removal of occupants and supplies as needed during 
 package edu.ucalgary.oop;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Location {
     private String name;
@@ -24,6 +25,12 @@ public class Location {
     public Location(String name, String address) {
         this.name = name;
         this.address = address;
+        this.occupants = new ArrayList<>();
+        this.supplies = new ArrayList<>();
+    }
+
+    public Location(String name) {
+        this.name = name;
         this.occupants = new ArrayList<>();
         this.supplies = new ArrayList<>();
     }
@@ -130,6 +137,26 @@ public class Location {
         }
         return null;
     }
-    
+
+    public ArrayList<DisasterVictim> searchVictims(String searchQuery) { // Changed return type to List<DisasterVictim>
+        ArrayList<DisasterVictim> searchResults = new ArrayList<>();
+        for (DisasterVictim victim : occupants) { // Changed reference to occupants
+            if (victim.getFirstName().toLowerCase().contains(searchQuery.toLowerCase())
+                    || victim.getLastName().toLowerCase().contains(searchQuery.toLowerCase())) {
+                searchResults.add(victim);
+            }
+        }
+        return searchResults;
+    }
+
+    public boolean locationExists(String name) {
+        if (name == this.name) {
+            return true;
+        }
+
+        else {
+            return false;
+        }
+    }
 
 }
