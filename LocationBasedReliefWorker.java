@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DisasterVictimInterface {
+public class LocationBasedReliefWorker {
     private List<Location> locations;
     private Scanner scanner;
     private DataBaseManager databaseManager;
     private String locationName;
 
-    public DisasterVictimInterface() {
+    public LocationBasedReliefWorker() {
         locations = new ArrayList<>();
         scanner = new Scanner(System.in);
         databaseManager = new DataBaseManager();
@@ -32,7 +32,8 @@ public class DisasterVictimInterface {
                     handleDisasterVictimInformation();
                     break;
                 case "2":
-                    handleLogInquirerQueries();
+                    CentralBasedReliefWorker centralWorker = new CentralBasedReliefWorker();
+                    centralWorker.run();
                     break;
                 case "3":
                     System.out.println("Thank you for using Disaster Relief Service.");
@@ -46,8 +47,9 @@ public class DisasterVictimInterface {
 
     private void displayMainMenu() {
         System.out.println("\nMain Menu:");
-        System.out.println("1. Disaster Victim Information");
-        System.out.println("2. Log Inquirer Queries");
+        System.out.println("Choose your mode:");
+        System.out.println("1. Location Based Relief Worker");
+        System.out.println("2. Central Based Relief Worker");
         System.out.println("3. Exit");
         System.out.print("Enter your choice: ");
     }
@@ -84,23 +86,36 @@ public class DisasterVictimInterface {
 
 
     private void handleLocationOperations(Location location) {
-        System.out.println("\nLocation: " + location.getName());
-        System.out.println("1. Add Victim");
-        System.out.println("2. Edit Victim"); // To be implemented later
-        System.out.print("Enter your choice: ");
+        boolean returnToMainMenu = false;
 
-        String operationChoice = scanner.nextLine().trim();
+        while (!returnToMainMenu) {
+            System.out.println("\nLocation: " + location.getName());
+            System.out.println("1. Add Victim");
+            System.out.println("2. Edit Victim");
+            System.out.println("3. Manage Supplies");
+            System.out.println("4. Return to Main Menu");
+            System.out.print("Enter your choice: ");
 
-        switch (operationChoice) {
-            case "1":
-                handleAddVictim(location);
-                break;
-            case "2":
-                handleEditVictim(location);
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-                break;
+            String operationChoice = scanner.nextLine().trim();
+
+            switch (operationChoice) {
+                case "1":
+                    handleAddVictim(location);
+                    break;
+                case "2":
+                    handleEditVictim(location);
+                    break;
+                case "3":
+                    handleManageSupplies();
+                    break;
+                case "4":
+                    System.out.println("Returning to the main menu.");
+                    returnToMainMenu = true; // Set flag to true to exit the loop
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
         }
     }
 
@@ -144,7 +159,7 @@ public class DisasterVictimInterface {
             if (isValidDate(entryDate)) {
                 break;
             } else {
-                System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                System.out.println("Invalid date format or value. Please enter the date in YYYY-MM-DD format.");
             }
         }
 
@@ -276,15 +291,16 @@ public class DisasterVictimInterface {
                     }
                     break;
                 case "4":
-                    // Handle adding family connection
                     System.out.print("Enter person's first name who has a connection to this victim: ");
                     String firstName1 = scanner.nextLine().trim();
-                    System.out.print("Enter relationship to the second person: ");
-                    String relationship = scanner.nextLine().trim();
+
                     DisasterVictim person1 = databaseManager.getDisasterVictimByFirstName(firstName1);
-                    if (person1 != null) {
-                        FamilyRelation familyRelation = new FamilyRelation(person1, relationship, victim);
-                        victim.addFamilyConnection(familyRelation);
+
+                    // Check if the entered name matches the victim's name
+                    if (person1 != null && !person1.getFirstName().equalsIgnoreCase(victim.getFirstName())) {
+                        addingFamilyConnection(victim, scanner, person1);
+                    } else if (person1 != null && person1.getFirstName().equalsIgnoreCase(victim.getFirstName())) {
+                        System.out.println("You can't use your own name!\n");
                     } else {
                         System.out.println("Error: One or both persons not found.");
                     }
@@ -299,21 +315,22 @@ public class DisasterVictimInterface {
                     if (belongingsLocation != null) {
                         Supply supply = new Supply(type, quantity);
                         victim.addPersonalBelonging(supply, belongingsLocation, quantity);
+                        databaseManager.updateSupplyQuantity(locationName, type, quantity);
                     } else {
                         System.out.println("Error: Location not found.");
                     }
                     break;
                 case "6":
-                    // Handle adding gender
-                    while (true) {
+                    boolean validGenderEntered = false;
+                    while (!validGenderEntered) {
                         System.out.print("Enter gender: ");
                         String gender = scanner.nextLine().trim().toLowerCase();
                         try {
                             victim.setGender(gender); // Call the method to validate and set the gender
-                            break; // Break out of the loop if the gender is valid
+                            validGenderEntered = true; // Set flag to true if the gender is valid
                         } catch (IllegalArgumentException e) {
                             System.out.println("Error: " + e.getMessage());
-                            System.out.println("Please enter a valid gender.");
+                            System.out.println("Please enter a valid gender.\n");
                         }
                     }
                     break;
@@ -392,30 +409,9 @@ public class DisasterVictimInterface {
         databaseManager.initializeLocations(locations); // Reload locations from the database
     }
 
-    private void handleLogInquirerQueries() {
-        System.out.println("\nLog Inquirer Queries:");
-        System.out.println("Choose your mode:");
-        System.out.println("1. Central-based relief worker");
-        System.out.println("2. Location-based relief worker");
-        System.out.print("Enter your choice: ");
-
-        String modeChoice = scanner.nextLine().trim();
-
-        switch (modeChoice) {
-            case "1":
-                System.out.println("Central-based relief worker mode selected. Feature to be implemented later.");
-                break;
-            case "2":
-                System.out.println("Location-based relief worker mode selected. Feature to be implemented later.");
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-                break;
-        }
-    }
-
     private void addAdditionalInfoForEdit(DisasterVictim victim, Scanner scanner) {
         while (true) {
+            System.out.println("\n");
             System.out.println("Choose information to edit:");
             System.out.println("1. First Name");
             System.out.println("2. Last Name");
@@ -449,10 +445,17 @@ public class DisasterVictimInterface {
                     victim.setApproximateAge(newAge);
                     break;
                 case "4":
-                    System.out.print("Enter new date of birth (YYYY-MM-DD): ");
-                    String newDob = scanner.nextLine().trim();
-                    victim.setDateOfBirth(newDob);
-                    break;
+                    while (true) {
+                        System.out.print("Enter Date of Birth: ");
+                        String newDob = scanner.nextLine().trim();
+                        if (isValidDate(newDob)) {
+                            victim.setDateOfBirth(newDob);
+                            break;
+                        } else {
+                            System.out.println("Invalid date format. Please enter the date in YYYY-MM-DD format.");
+                        }
+                    }
+                break;
                 case "5":
                     System.out.print("Enter new comments: ");
                     String newComments = scanner.nextLine().trim();
@@ -475,22 +478,22 @@ public class DisasterVictimInterface {
                     }
                     break;
                 case "7":
-                    // Handle editing family connection
                     System.out.print("Enter person's first name who has a connection to this victim: ");
                     String firstName1 = scanner.nextLine().trim();
-                    System.out.print("Enter new relationship to the second person: ");
-                    String newRelationship = scanner.nextLine().trim();
+
                     DisasterVictim person1 = databaseManager.getDisasterVictimByFirstName(firstName1);
-                    if (person1 != null) {
-                        FamilyRelation newFamilyRelation = new FamilyRelation(person1, newRelationship, victim);
-                        victim.addFamilyConnection(newFamilyRelation);
+
+                    // Check if the entered name matches the victim's name
+                    if (person1 != null && !person1.getFirstName().equalsIgnoreCase(victim.getFirstName())) {
+                        addingFamilyConnection(victim, scanner, person1);
+                    } else if (person1 != null && person1.getFirstName().equalsIgnoreCase(victim.getFirstName())) {
+                        System.out.println("You can't use your own name!\n");
                     } else {
                         System.out.println("Error: One or both persons not found.");
                     }
                     break;
                 case "8":
                     // Handle editing personal belongings
-                    System.out.print("Enter type of belonging: ");
                     String type = scanner.nextLine().trim();
                     System.out.print("Enter new quantity: ");
                     int newQuantity = Integer.parseInt(scanner.nextLine().trim());
@@ -503,10 +506,18 @@ public class DisasterVictimInterface {
                     }
                     break;
                 case "9":
-                    // Handle editing gender
-                    System.out.print("Enter new gender: ");
-                    String newGender = scanner.nextLine().trim().toLowerCase();
-                    victim.setGender(newGender);
+                    boolean validGenderEntered = false;
+                    while (!validGenderEntered) {
+                        System.out.print("Enter gender: ");
+                        String gender = scanner.nextLine().trim().toLowerCase();
+                        try {
+                            victim.setGender(gender); // Call the method to validate and set the gender
+                            System.out.print("Gender updated successfully.\n");
+                            validGenderEntered = true; // Set flag to true if the gender is valid
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage() + "\n");
+                        }
+                    }
                     break;
                 case "10":
                     // Handle editing dietary restrictions
@@ -536,9 +547,186 @@ public class DisasterVictimInterface {
         }
     }
 
+    public void addingFamilyConnection(DisasterVictim victim, Scanner scanner, DisasterVictim person1) {
+        if (person1 != null) {
+            String newRelationship;
+            boolean isValidRelationship = false;
+
+            do {
+                System.out.print("Enter relationship type (Sibling, Parent/Child, Relative, Spouse, Other): ");
+                newRelationship = scanner.nextLine().trim();
+
+                // Validate the relationship type
+                isValidRelationship = isValidRelationship(newRelationship);
+
+                if (!isValidRelationship) {
+                    System.out.println("Error: Invalid relationship type. Please try again.");
+                }
+            } while (!isValidRelationship);
+
+            FamilyRelation newFamilyRelation = new FamilyRelation(victim, newRelationship, person1);
+            victim.addFamilyConnection(newFamilyRelation);
+        } else {
+            System.out.println("Error: One or both persons not found.");
+        }
+    }
+
+    private static boolean isValidRelationship(String relationship) {
+        // Define valid relationship types
+        String[] validRelationships = {"Sibling", "Parent/Child", "Relative", "Spouse", "Other"};
+        for (String validRelation : validRelationships) {
+            if (validRelation.equalsIgnoreCase(relationship)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void handleManageSupplies() {
+        System.out.println("\nManage Supplies:");
+        System.out.println("1. View Supplies");
+        System.out.println("2. Edit Supply");
+        System.out.println("3. Add Supply");
+        System.out.print("Enter your choice: ");
+
+        String supplyChoice = scanner.nextLine().trim();
+
+        switch (supplyChoice) {
+            case "1":
+                handleViewSupplies();
+                break;
+            case "2":
+                handleEditSupply();
+                break;
+            case "3":
+                handleAddSupply();
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                break;
+        }
+    }
+
+    private void handleViewSupplies() {
+        // Retrieve the location object based on the selected locationName
+        Location location = databaseManager.getLocationByName(locationName);
+
+        if (location != null) {
+            // Retrieve and display all supplies for the location
+            ArrayList<Supply> supplies = location.getSupplies();
+
+            System.out.println("\nSupplies for " + locationName + ":");
+            if (supplies.isEmpty()) {
+                System.out.println("No supplies found.");
+            } else {
+                for (Supply supply : supplies) {
+                    System.out.println("- " + supply.getType() + ": " + supply.getQuantity());
+                }
+            }
+        } else {
+            System.out.println("Location not found.");
+        }
+    }
+
+    private void handleEditSupply() {
+        // Retrieve the location object based on the selected locationName
+        Location location = databaseManager.getLocationByName(locationName);
+
+        if (location != null) {
+            List<Supply> supplies = location.getSupplies();
+
+            System.out.println("\nSelect a supply to edit:");
+            if (supplies.isEmpty()) {
+                System.out.println("No supplies found in " + locationName + ".");
+                return;
+            }
+
+            for (int i = 0; i < supplies.size(); i++) {
+                Supply supply = supplies.get(i);
+                System.out.println((i + 1) + ". " + supply.getType() + " - Quantity: " + supply.getQuantity());
+            }
+
+            System.out.print("Enter the number of the supply to edit: ");
+            try {
+                int supplyIndex = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (supplyIndex >= 0 && supplyIndex < supplies.size()) {
+                    Supply supplyToEdit = supplies.get(supplyIndex);
+
+                    System.out.println("Selected Supply: " + supplyToEdit.getType());
+
+                    System.out.println("What would you like to do?");
+                    System.out.println("1. Add Quantity");
+                    System.out.println("2. Remove Quantity");
+                    System.out.print("Enter your choice: ");
+                    String editChoice = scanner.nextLine().trim();
+
+                    switch (editChoice) {
+                        case "1":
+                            System.out.print("Enter quantity to add: ");
+                            int quantityToAdd = Integer.parseInt(scanner.nextLine().trim());
+                            int currentQuantity = supplyToEdit.getQuantity();
+                            supplyToEdit.setQuantity(currentQuantity + quantityToAdd);
+                            break;
+                        case "2":
+                            System.out.print("Enter quantity to remove: ");
+                            int quantityToRemove = Integer.parseInt(scanner.nextLine().trim());
+                            currentQuantity = supplyToEdit.getQuantity();
+                            if (currentQuantity >= quantityToRemove) {
+                                supplyToEdit.setQuantity(currentQuantity - quantityToRemove);
+                            } else {
+                                System.out.println("Error: Quantity to remove exceeds current quantity.");
+                                return;
+                            }
+                            break;
+                        default:
+                            System.out.println("Invalid choice.");
+                            return;
+                    }
+
+                    // Update the supply in the database
+                    databaseManager.updateSupply(supplyToEdit);
+                    System.out.println("Supply updated successfully.");
+                } else {
+                    System.out.println("Invalid supply number.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        } else {
+            System.out.println("Location not found.");
+        }
+    }
+
+    private void handleAddSupply() {
+        // Retrieve the location object based on the selected locationName
+        Location location = databaseManager.getLocationByName(locationName);
+
+        if (location != null) {
+            System.out.println("\nAdding a new supply for " + locationName + ":");
+
+            System.out.print("Enter supply name: ");
+            String supplyName = scanner.nextLine().trim();
+
+            System.out.print("Enter quantity: ");
+            int quantity = Integer.parseInt(scanner.nextLine().trim());
+
+            // Create a new Supply object
+            Supply newSupply = new Supply(supplyName, quantity);
+
+            // Add the new supply to the location
+            location.addSupply(newSupply);
+
+            // Insert the new supply into the database
+            databaseManager.addSupply(newSupply, locationName);
+
+            System.out.println("Supply added successfully to " + locationName + ".");
+        } else {
+            System.out.println("Location not found.");
+        }
+    }
+
 
     public static void main(String[] args) {
-        DisasterVictimInterface victimInterface = new DisasterVictimInterface();
+        LocationBasedReliefWorker victimInterface = new LocationBasedReliefWorker();
         victimInterface.run();
     }
 }

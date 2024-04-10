@@ -17,12 +17,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class DisasterVictim extends Person {
     // Variables
     private String dateOfBirth;
     private int approximateAge;
-    private String comments;
+    private ArrayList<String> comments;;
     private static int counter = 0;
     private final int ASSIGNED_SOCIAL_ID;
     private ArrayList<MedicalRecord> medicalRecords;
@@ -31,6 +30,12 @@ public class DisasterVictim extends Person {
     private ArrayList<Supply> personalBelongings;
     private String gender;
     private ArrayList<Diet> dietaryRestrictions;
+
+    private String locationName;
+
+    private boolean status = true;
+    // True means not missing
+    // False means missing
 
     public enum Diet {
         AVML,
@@ -66,7 +71,7 @@ public class DisasterVictim extends Person {
         this.medicalRecords = new ArrayList<>();
         this.familyConnections = new ArrayList<>();
         this.personalBelongings = new ArrayList<>();
-
+        this.comments = new ArrayList<>();
     }
 
     public DisasterVictim(String firstName, String ENTRY_DATE, String dateOfBirth) throws IllegalArgumentException {
@@ -90,7 +95,19 @@ public class DisasterVictim extends Person {
         this.medicalRecords = new ArrayList<>();
         this.familyConnections = new ArrayList<>();
         this.personalBelongings = new ArrayList<>();
+        this.comments = new ArrayList<>();
+    }
 
+    public DisasterVictim(String firstName, String lastName) {
+        super(firstName, lastName);
+        this.status = false;
+        this.ENTRY_DATE = "0000-00-00";
+
+        this.ASSIGNED_SOCIAL_ID = counter++;
+        this.medicalRecords = new ArrayList<>();
+        this.familyConnections = new ArrayList<>();
+        this.personalBelongings = new ArrayList<>();
+        this.comments = new ArrayList<>();
     }
 
     // Getters
@@ -99,11 +116,15 @@ public class DisasterVictim extends Person {
         return this.dateOfBirth;
     }
 
+    public String getLocationName() {
+        return this.locationName;
+    }
+
     public int getApproximateAge() {
         return this.approximateAge;
     }
 
-    public String getComments() {
+    public List<String> getComments() {
         return this.comments;
     }
 
@@ -138,26 +159,29 @@ public class DisasterVictim extends Person {
 
     // Setters
 
-    public void setComments(String comments) {
-        if (comments instanceof String) {
-            this.comments = comments;
-            return;
+    public void addComments(String comments) {
+        if (comments == null) {
+            throw new IllegalArgumentException("Comments cannot be null.");
         }
-        System.out.println("Comments cannot be null");
+        this.comments.add(comments);
     }
 
     public void setGender(String gender) throws IllegalArgumentException {
-        try {
-            List<String> genderOptions = new FileManager().readConfigurationFile();
-            if (genderOptions.contains(gender.toLowerCase())) {
-                this.gender = gender.toLowerCase();
-                return;
+        FileManager fileManager = new FileManager();
+        List<String> genders = fileManager.readConfigurationFile();
+
+        if (genders.isEmpty()) {
+            System.out.println("Error: No gender options found. Defaulting to 'Unknown' gender.");
+            this.gender = "Unknown";
+        } else {
+            if (genders.contains(gender.toLowerCase())) {
+                this.gender = gender;
+            } else {
+                throw new IllegalArgumentException("Invalid gender: " + gender + ". Please select from the following options: " + genders);
             }
-            throw new IllegalArgumentException("Gender not found in the options file.");
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error reading gender options file.");
         }
     }
+
 
     public void setDateOfBirth(String dateOfBirth) throws IllegalArgumentException {
         if (dateOfBirth.matches("\\d{4}-\\d{2}-\\d{2}")) {
@@ -184,15 +208,6 @@ public class DisasterVictim extends Person {
         this.approximateAge = approximateAge;
     }
 
-    // Mecical Recods
-    public void setMedicalRecords(ArrayList<MedicalRecord> medicalRecords) {
-        if (medicalRecords == null) {
-            System.out.println("Medical records cannot be null");
-        } else {
-            this.medicalRecords = new ArrayList<>(medicalRecords);
-        }
-    }
-
     public void addMedicalRecord(MedicalRecord medicalRecord) {
         if (medicalRecord == null) {
             System.out.println("You can't add null medical records");
@@ -205,23 +220,16 @@ public class DisasterVictim extends Person {
     }
 
     // Personal Belongings
-    public void setPersonalBelongings(ArrayList<Supply> supplies) {
-        if (supplies == null) {
-            System.out.println("Supplies records cannot be null");
-        }
-        this.personalBelongings = new ArrayList<>(supplies);
-    }
-
-    public void addPersonalBelonging(Supply supply, Location location) {
+    public void addPersonalBelonging(Supply supply, Location location, int quantity) {
         if (supply != null) {
             if (this.personalBelongings == null) {
                 this.personalBelongings = new ArrayList<>();
             }
             this.personalBelongings.add(supply);
             if (location != null) {
-                location.supplyTracker(supply);
+                location.supplyTracker(supply, quantity);
             } else {
-                System.out.println("Location is null. Cannot track supply.");
+                System.out.println("Location is null. Cannot addFamilyConnectiontrack supply.");
             }
         } else {
             System.out.println("You can't add null supplies");
@@ -245,28 +253,76 @@ public class DisasterVictim extends Person {
         this.familyConnections = new ArrayList<>(relations);
     }
 
-    public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
+    public void setLocationName(String locationName) {
+        if (locationName == null) {
+            System.out.println("Location name cannot be null");
+        }
+        this.locationName = locationName;
+    }
+
+    public void addFamilyConnection(FamilyRelation familyConnection) {
         if (familyConnection == null) {
             System.out.println("You can't add null family connections");
         } else {
-            if (this.familyConnections == null) {
-                this.familyConnections = new ArrayList<>();
-            }
             // Check for duplicate relationship
             if (!checkDuplicate(familyConnection)) {
                 this.familyConnections.add(familyConnection);
                 // Check series of relationships and add extra if needed
-                checkSeriesOfRelationships();
+                bidirectionalRelationships(familyConnection.getPersonTwo(), familyConnection.getRelationshipTo(), familyConnection.getPersonOne());
+                handleReciprocalRelationships(familyConnection);
+                System.out.println("Family connection added!\n");
             } else {
-                throw new IllegalArgumentException("Duplicate relationship already exists.");
+                System.out.println("Duplicate relationship already exists.\n");
             }
+        }
+    }
+
+    private void handleReciprocalRelationships(FamilyRelation newRelation) {
+        DisasterVictim personOne = newRelation.getPersonOne();
+        DisasterVictim personTwo = newRelation.getPersonTwo();
+        String relationshipType = newRelation.getRelationshipTo();
+
+        // Handle reciprocal relationships based on the relationship type
+        switch (relationshipType) {
+            case "Sibling":
+                // Make all siblings of personOne (excluding personTwo) siblings of personTwo
+                for (FamilyRelation relation : personOne.getFamilyConnections()) {
+                    if (relation.getRelationshipTo().equals("Sibling") && !relation.getPersonTwo().equals(personTwo)) {
+                        FamilyRelation reciprocalRelation = new FamilyRelation(personTwo, "Other", relation.getPersonTwo());
+                        personTwo.addFamilyConnection(reciprocalRelation);
+                    }
+                }
+                // Make all siblings of personTwo (excluding personOne) siblings of personOne
+                for (FamilyRelation relation : personTwo.getFamilyConnections()) {
+                    if (relation.getRelationshipTo().equals("Sibling") && !relation.getPersonTwo().equals(personOne)) {
+                        FamilyRelation reciprocalRelation = new FamilyRelation(personOne, "Other", relation.getPersonTwo());
+                        personOne.addFamilyConnection(reciprocalRelation);
+                    }
+                }
+                break;
+            case "Parent/Child":
+                // Make all parent/child relationships of personOne (excluding personTwo) relationships with personTwo
+                for (FamilyRelation relation : personOne.getFamilyConnections()) {
+                    if (relation.getRelationshipTo().equals("Parent/Child") && !relation.getPersonTwo().equals(personTwo)) {
+                        FamilyRelation reciprocalRelation = new FamilyRelation(personTwo, "Other", relation.getPersonTwo());
+                        personTwo.addFamilyConnection(reciprocalRelation);
+                    }
+                }
+                // Make all parent/child relationships of personTwo (excluding personOne) relationships with personOne
+                for (FamilyRelation relation : personTwo.getFamilyConnections()) {
+                    if (relation.getRelationshipTo().equals("Parent/Child") && !relation.getPersonTwo().equals(personOne)) {
+                        FamilyRelation reciprocalRelation = new FamilyRelation(personOne, "Other", relation.getPersonTwo());
+                        personOne.addFamilyConnection(reciprocalRelation);
+                    }
+                }
+                break;
         }
     }
 
     public boolean checkDuplicate(FamilyRelation newRelation) {
         if (familyConnections != null) {
             for (FamilyRelation relation : familyConnections) {
-                if (relation.checkExisting(newRelation.getPersonOne(), newRelation.getPersonTwo())) {
+                if (relation.checkExisting(relation.getPersonOne(), newRelation.getPersonTwo())) {
                     return true;
                 }
             }
@@ -274,21 +330,20 @@ public class DisasterVictim extends Person {
         return false;
     }
 
-    private void checkSeriesOfRelationships() {
-        if (familyConnections != null) {
-            for (int i = 0; i < familyConnections.size(); i++) {
-                FamilyRelation newRelation = familyConnections.get(i);
-                for (int j = i + 1; j < familyConnections.size(); j++) {
-                    FamilyRelation existingRelation = familyConnections.get(j);
-                    if (existingRelation.checkSeriesOfRelationship(newRelation.getPersonOne(), newRelation.getRelationshipTo(), newRelation.getPersonTwo())) {
-                        // If series of relationships detected, add the inverse relationship
-                        DisasterVictim personOne = newRelation.getPersonOne();
-                        DisasterVictim personTwo = existingRelation.getPersonTwo();
-                        addFamilyConnection(new FamilyRelation(personOne, newRelation.getRelationshipTo(), personTwo));
-                        return;
-                    }
-                }
+    private void bidirectionalRelationships(DisasterVictim personOne, String relationship, DisasterVictim personTwo) {
+        // Check if a direct relationship already exists
+        boolean exists = false;
+        for (FamilyRelation relation : personOne.getFamilyConnections()) {
+            if (relation.getPersonOne() == personOne && relation.getPersonTwo() == personTwo && relation.getRelationshipTo().equals(relationship)) {
+                exists = true;
+                break;
             }
+        }
+
+        if (!exists) {
+            // Create and add the missing bidirectional relationship
+            FamilyRelation reverseRelation = new FamilyRelation(personOne, relationship, personTwo);
+            personOne.getFamilyConnections().add(reverseRelation);
         }
     }
     
@@ -319,18 +374,21 @@ public class DisasterVictim extends Person {
         }
     }
 
-    // Method to check if a relationship exists between this instance and another
-    // DisasterVictim
     public boolean hasRelation(DisasterVictim victim) {
         if (familyConnections != null) {
             for (FamilyRelation relation : familyConnections) {
-                if (relation.getPersonOne() == victim || relation.getPersonTwo() == victim) {
-                    return true;
+                DisasterVictim personOne = relation.getPersonOne();
+                DisasterVictim personTwo = relation.getPersonTwo();
+                // Check if personOne or personTwo matches the victim by firstName and entryDate
+                if (personOne.getFirstName().equals(victim.getFirstName())
+                        || personTwo.getFirstName().equals(victim.getFirstName()) ) {
+                    return true; // Relationship already exists
                 }
             }
         }
-        return false;
+        return false; // No matching relationship found
     }
+
 
     public void addDietaryRestriction(Diet restriction) {
         if (dietaryRestrictions == null) {

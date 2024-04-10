@@ -21,16 +21,14 @@ public class ReliefService {
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
     private String dateOfInquiry;
-    private String infoProvided;
     private Location lastKnownLocation;
     private ArrayList<String> interactionHistory;
 
     public ReliefService(Inquirer inquirer, DisasterVictim missingPerson,
-            String dateOfInquiry, String infoProvided, Location lastKnownLocation) throws IllegalArgumentException {
+            String dateOfInquiry, Location lastKnownLocation) throws IllegalArgumentException {
         setInquirer(inquirer);
         setMissingPerson(missingPerson);
         setDateOfInquiry(dateOfInquiry);
-        setInfoProvided(infoProvided);
         setLastKnownLocation(lastKnownLocation);
         interactionHistory = new ArrayList<>();
     }
@@ -68,14 +66,6 @@ public class ReliefService {
         this.dateOfInquiry = dateOfInquiry;
     }
 
-    public void setInfoProvided(String infoProvided) throws IllegalArgumentException {
-        if (infoProvided instanceof String) {
-            this.infoProvided = infoProvided;
-            return;
-        }
-        throw new IllegalArgumentException("Invalid information provided: " + infoProvided);
-    }
-
     public void setLastKnownLocation(Location lastKnownLocation) throws IllegalArgumentException {
         if (lastKnownLocation instanceof Location) {
             this.lastKnownLocation = lastKnownLocation;
@@ -96,31 +86,37 @@ public class ReliefService {
         return dateOfInquiry;
     }
 
-    public String getInfoProvided() {
-        return infoProvided;
-    }
-
     public Location getLastKnownLocation() {
         return lastKnownLocation;
     }
 
     public String getLogDetails() {
-        String logDetails = "Inquirer: " + inquirer.getFirstName() + ", Missing Person: " + missingPerson.getFirstName()
-                +
-                ", Date of Inquiry: " + this.dateOfInquiry + ", Info Provided: " + this.infoProvided +
-                ", Last Known Location: " + this.lastKnownLocation.getName();
+        String logDetails = "Inquirer: " + inquirer.getFirstName() + ", Missing Person: " + missingPerson.getFirstName() + ", Date of Inquiry: "
+                + this.dateOfInquiry + ", Last Known Location: " + this.lastKnownLocation.getName();
 
         return logDetails;
     }
 
     public void addInteractionLog(String logDetails) {
-        interactionHistory.add(logDetails);
+        if (logDetails != null && !logDetails.isEmpty()) {
+            interactionHistory.add(logDetails);
+        }
+    }
+
+    public List<String> getInteractionHistory() {
+        return interactionHistory;
     }
 
     public String showInteractionLog() {
-        // Concatenate interaction logs into a single string
-        return String.join("\n", interactionHistory);
+        StringBuilder logBuilder = new StringBuilder();
+        for (String log : interactionHistory) {
+            if (log != null && !log.isEmpty()) {
+                logBuilder.append(log).append("\n");
+            }
+        }
+        return logBuilder.toString();
     }
+
 
     /**
      * Search for disaster victims by a part of their name, regardless of case

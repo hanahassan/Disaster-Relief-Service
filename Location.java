@@ -77,7 +77,7 @@ public class Location {
         if (!this.occupants.contains(occupant)) {
             this.occupants.add(occupant);
         } else {
-            System.out.println("Occupant already exists in the location.");
+            System.out.println("WARNING: Occupant: " + occupant.getFirstName() + " already exists in " + getName());
         }
     }
 
@@ -111,14 +111,24 @@ public class Location {
      * 
      * @param supply The supply to be tracked and decreased.
      */
-    public void supplyTracker(Supply supply) {
-        if (this.supplies.contains(supply)) {
-            Supply trackedSupply = this.supplies.get(this.supplies.indexOf(supply));
-            trackedSupply.decreaseQuantity(1); // Decrease the quantity of the tracked supply by 1
-        } else {
+// Debugging supplyTracker() method within Location class
+    public void supplyTracker(Supply supply, int quantity) {
+        boolean found = false;
+
+        // Iterate through the supplies list to find the matching supply by type
+        for (Supply trackedSupply : this.supplies) {
+            if (trackedSupply.getType().equalsIgnoreCase(supply.getType())) {
+                trackedSupply.decreaseQuantity(quantity); // Decrease the quantity of the tracked supply by 'quantity'
+                System.out.println("Supply tracked successfully: " + trackedSupply.getType() + " - New Quantity: " + trackedSupply.getQuantity());
+                found = true;
+                break; // Exit the loop once the supply is found and updated
+            }
+        }
+        if (!found) {
             System.out.println("Supply not found in the location.");
         }
     }
+
     
     public String getFirstName() {
         for (DisasterVictim victim : occupants) {
